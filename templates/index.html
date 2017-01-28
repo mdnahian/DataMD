@@ -1,0 +1,87 @@
+<html>
+	<head>
+		<title>Data MD - Realtime Application Visualizer</title>
+
+		<style type="text/css">
+			body {
+				background-color:#eeeeee;
+				margin: 0 auto;
+			}
+
+			#container {
+				width:100%;
+				max-width: 960px;
+			}
+
+			.box {
+				background-color:#ffffff;
+				width:200px;
+				height:200px;
+				text-align:center;
+			}
+
+			.ball {
+				width:100px;
+				height:100px;
+				border-radius:50px;
+				position: absolute;
+			}
+		</style>
+
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+		    var socket = io.connect('http://' + document.domain + ':' + location.port);
+		    
+		    socket.on('connect', function (data) {
+		    	socket.emit('message', 'Connected!');
+		    	if(data != null){
+			    	console.log(data);
+
+			    	var from = data['from'];
+			    	var to = data['to'];
+
+			    	var fromBox = createBox(from['name'], from['color']);
+			    	var toBox = createBox(to['name'], to['color']);
+
+			    	releasePoint(fromBox, toBox);
+			    } else {
+			    	console.log('No Data');
+			    }
+		    });
+
+
+		    function releasePoint(fromBox, toBox){
+		    	var from = document.getElementById(fromBox).getBoundingClientRect();
+		    	var toBox = document.getElementById(toBox).getBoundingClientRect();
+
+		    	var body = document.body.getBoundingClientRect();
+
+		    	var fromTop = from.top - body.top;
+		    	var fromLeft = from.left - body.left;
+
+		    	var point = "<div class='' style='top:"+ fromTop +"; left:"+ fromLeft +";'></div>";
+
+		    	document.getElementById('container').innerHTML += point;
+
+		    }
+
+
+		    function createBox(name, color){
+		    	var boxName = name.replace(/\s+/g, '').replace(/[^a-zA-Z ]/g, "");
+
+		    	var currentBox = document.getElementById(boxName);
+
+		    	if(currentBox == null){
+		    		currentBox = "<div id='"+ boxName +"' class='box' style='border:5px "+ color +" solid; color:"+ color +"; '> "+ name +" </div>";
+		    		document.getElementById('container').innerHTML += currentBox;
+		    	}
+
+		    	return boxName;
+		    }
+		</script>
+	</head>
+
+	<body>
+		<div id="container"></div>
+	</body>
+</html>

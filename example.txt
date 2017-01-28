@@ -1,0 +1,8 @@
+from datamd import DataMd, Point
+
+visualizer = DataMd('asd732hd8a83h', host='138.197.0.96', port=int(5000))
+
+server = Point(name='Server', color='red')
+client = Point(name='Client', color='blue')
+
+visualizer.send(server, client)
